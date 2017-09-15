@@ -15,22 +15,22 @@
  */
 package org.uberfire.ext.services.shared.preferences;
 
-import org.jboss.errai.common.client.api.annotations.Portable;
+import org.uberfire.preferences.shared.annotations.Property;
+import org.uberfire.preferences.shared.annotations.WorkbenchPreference;
+import org.uberfire.preferences.shared.bean.BasePreference;
 
-@Portable
-public class UserWorkbenchPreferences extends UserPreference {
-
+@WorkbenchPreference(identifier = "UserWorkbenchPreferences")
+public class UserWorkbenchPreferences implements BasePreference<UserWorkbenchPreferences> {
+    @Property
     private String language;
+
+    @Property
     private boolean useWorkbenchInCompactMode;
 
-    public UserWorkbenchPreferences() {
-    }
-
-    public UserWorkbenchPreferences(final String language) {
-        super();
-        super.type = UserPreferencesType.WORKBENCHSETTINGS;
-        super.preferenceKey = "settings";
-        this.language = language;
+    @Override
+    public UserWorkbenchPreferences defaultValue(final UserWorkbenchPreferences defaultValue) {
+        defaultValue.useWorkbenchInCompactMode=false;
+        return defaultValue;
     }
 
     public String getLanguage() {

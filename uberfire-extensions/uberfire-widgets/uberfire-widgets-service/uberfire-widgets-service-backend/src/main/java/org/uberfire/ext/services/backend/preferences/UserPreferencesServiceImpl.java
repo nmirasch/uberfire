@@ -25,14 +25,28 @@ import org.uberfire.backend.server.UserServicesBackendImpl;
 import org.uberfire.ext.services.shared.preferences.UserPreference;
 import org.uberfire.ext.services.shared.preferences.UserPreferencesService;
 import org.uberfire.ext.services.shared.preferences.UserPreferencesType;
+import org.uberfire.ext.services.shared.preferences.UserWorkbenchPreferences;
 import org.uberfire.io.IOService;
 import org.uberfire.java.nio.file.Path;
+import org.uberfire.preferences.shared.PreferenceScope;
+import org.uberfire.preferences.shared.impl.DefaultScopes;
+import org.uberfire.preferences.shared.impl.PreferenceScopeFactoryImpl;
+import org.uberfire.preferences.shared.impl.PreferenceScopeImpl;
 
 @Service
 public class UserPreferencesServiceImpl implements UserPreferencesService {
 
+    private PreferenceScopeFactoryImpl scopeFactory;
+    private PreferenceScope userEntireApplicationScope;
+    private String userScopeType = DefaultScopes.USER.type();
+    private String userScopeKey;
+    private PreferenceScopeImpl userScope;
+
     @Inject
     private UserServicesBackendImpl userServicesBackend;
+
+    @Inject
+    private UserWorkbenchPreferences userWorkbenchPreferences;
 
     @Inject
     private User identity;
@@ -42,6 +56,12 @@ public class UserPreferencesServiceImpl implements UserPreferencesService {
     private IOService ioServiceConfig;
 
     private XStream xs = new XStream();
+
+    public UserPreferencesServiceImpl(){
+        userScopeKey = identity.getIdentifier();
+        userScope = new PreferenceScopeImpl(userScopeType,userScopeKey, null);
+        userEntireApplicationScope = scopeFactory.createScope(userScope);
+    }
 
     @Override
     public void saveUserPreferences(final UserPreference preferences) {
@@ -92,5 +112,14 @@ public class UserPreferencesServiceImpl implements UserPreferencesService {
                                                                    preferences.getType().getExt(),
                                                                    preferences.getPreferenceKey());
         return loadUserPreferences(preferencesPath);
+    }
+
+    public UserWorkbenchPreferences getUserWorkbenchPreferences() {
+        userWorkbenchPreferences.load();
+        return userWorkbenchPreferences;
+    }
+
+    public void saveUserWorkbenchPreferences(UserWorkbenchPreferences userWorkbenchPreferences) {
+        userWorkbenchPreferences.save(userEntireApplicationScope);
     }
 }

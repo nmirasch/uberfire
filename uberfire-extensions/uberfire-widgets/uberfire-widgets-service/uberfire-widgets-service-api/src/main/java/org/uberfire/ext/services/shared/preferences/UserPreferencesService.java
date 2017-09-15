@@ -26,4 +26,8 @@ public interface UserPreferencesService {
                                        final UserPreferencesType type);
 
     UserPreference loadUserPreferences(final UserPreference preferences);
+
+    UserWorkbenchPreferences getUserWorkbenchPreferences();
+
+    void saveUserWorkbenchPreferences(UserWorkbenchPreferences userWorkbenchPreferences);
 }
